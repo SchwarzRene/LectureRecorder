@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TU Wien · Lecture Recorder</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f2f5; --surface: #fff; --surface2: #f7f8fa;
+    --border: #e2e5eb; --border2: #cdd1db;
+    --accent: #c0392b; --accent2: #e05a30;
+    --accent-bg: #fdf1f0; --accent-border: #f5c6c3;
+    --teal: #0d9e87; --teal-bg: #edf8f6; --teal-border: #b2e2da;
+    --blue: #2563eb; --blue-bg: #eff6ff; --blue-border: #bfdbfe;
+    --orange: #d97706; --orange-bg: #fffbeb; --orange-border: #fde68a;
+    --text: #1a1d24; --text2: #3d4452; --muted: #7c8494;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06),0 4px 10px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.10),0 1px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,0.14),0 4px 16px rgba(0,0,0,0.08);
+    --mono: 'Space Mono',monospace; --sans: 'DM Sans',sans-serif; --r: 9px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 0 var(--border),0 2px 8px rgba(0,0,0,0.04)}
+  .logo{display:flex;align-items:center;gap:11px}
+  .logo-mark{width:32px;height:32px;background:var(--accent);clip-path:polygon(0 0,100% 0,100% 70%,70% 100%,0 100%);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:white}
+  .logo-text{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+  .logo-text strong{color:var(--text)}
+  .header-right{display:flex;align-items:center;gap:10px}
+  .status-pill{display:flex;align-items:center;gap:7px;padding:5px 12px;border-radius:20px;border:1px solid var(--teal-border);background:var(--teal-bg)}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal);animation:pulse 2.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  .status-label{font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:.05em}
+  .rec-indicator{display:none;align-items:center;gap:7px;padding:5px 12px;border-radius:20px;border:1px solid var(--accent-border);background:var(--accent-bg)}
+  .rec-indicator.active{display:flex}
+  .rec-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}
+  .rec-label{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.05em}
+
+  .app{max-width:1280px;margin:0 auto;padding:30px 32px}
+
+  /* STATS */
+  .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:26px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+  .stat-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .stat-value{font-family:var(--mono);font-size:24px;font-weight:700;line-height:1}
+  .stat-value.accent{color:var(--accent)} .stat-value.teal{color:var(--teal)}
+  .stat-value.orange{color:var(--orange)} .stat-value.small{font-size:17px;margin-top:3px}
+
+  /* TABS */
+  .tabs{display:flex;gap:2px;margin-bottom:26px;border-bottom:2px solid var(--border)}
+  .tab{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:11px 20px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s;background:none;border-top:none;border-left:none;border-right:none}
+  .tab:hover{color:var(--text2)} .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .tab-panel{display:none} .tab-panel.active{display:block;animation:fadeUp .22s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .section-title{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+  /* BUTTONS */
+  .btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:8px 14px;border-radius:6px;border:none;cursor:pointer;transition:all .18s;text-transform:uppercase;white-space:nowrap}
+  .btn-primary{background:var(--accent);color:white} .btn-primary:hover{background:#a93226;box-shadow:0 3px 12px rgba(192,57,43,.2);transform:translateY(-1px)}
+  .btn-ghost{background:white;color:var(--text2);border:1px solid var(--border2)} .btn-ghost:hover{background:var(--surface2)}
+  .btn-teal{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)} .btn-teal:hover{background:#d7f0ec}
+  .btn-danger{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border)} .btn-danger:hover{background:#fbe3e1}
+  .btn-orange{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)} .btn-orange:hover{background:#fef3c7}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+  .icon-btn{width:28px;height:28px;border-radius:5px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+  .icon-btn:hover{border-color:var(--border2);background:var(--surface2);color:var(--text)}
+  .icon-btn.danger:hover{color:var(--accent);border-color:var(--accent-border);background:var(--accent-bg)}
+  .icon-btn.copy:hover{color:var(--teal);border-color:var(--teal-border);background:var(--teal-bg)}
+  .icon-btn.rec-btn{border-color:var(--teal-border);color:var(--teal);background:var(--teal-bg)}
+  .icon-btn.rec-btn:hover{background:#d7f0ec}
+  .icon-btn.rec-btn.recording{border-color:var(--accent-border);color:var(--accent);background:var(--accent-bg);animation:pulse 1.5s infinite}
+
+  /* COURSE GRID */
+  .course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .course-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;transition:all .18s;position:relative;overflow:hidden;box-shadow:var(--shadow);cursor:pointer}
+  .course-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform .28s ease}
+  .course-card:hover{border-color:var(--accent-border);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .course-card:hover::after{transform:scaleX(1)}
+  .course-card.recording-active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.15)}
+  .course-card.recording-active::after{transform:scaleX(1)}
+  .course-card.inactive{opacity:.55}
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+  .card-btns{display:flex;gap:5px}
+  .course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);padding:3px 8px;border-radius:4px;border:1px solid var(--accent-border)}
+  .course-badge.inactive{background:#f3f4f6;color:var(--muted);border-color:var(--border)}
+  .course-badge.recording{background:var(--accent);color:white;border-color:var(--accent);animation:pulse 1.2s infinite}
+  .course-name{font-size:14px;font-weight:600;line-height:1.35;margin-bottom:6px}
+  .course-meta{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+  .recording-count{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .rec-pill{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border);padding:2px 7px;border-radius:3px;font-size:10px}
+  .card-hint{font-family:var(--mono);font-size:10px;color:#c0c5cf;margin-left:auto}
+
+  /* RECORDINGS */
+  .rec-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .filter-chip{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .filter-chip:hover{color:var(--text);border-color:var(--border2)}
+  .filter-chip.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)}
+  .toolbar-sep{flex:1}
+  .mini-select{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:5px 24px 5px 10px;border-radius:6px;border:1px solid var(--border);background:white;color:var(--text2);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237c8494'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+  .mini-select:focus{border-color:var(--accent)}
+
+  .rec-group{margin-bottom:18px;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+  .rec-group-header{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;user-select:none;transition:background .15s}
+  .rec-group-header:hover{background:#eceef2}
+  .rec-group-title{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);font-weight:700}
+  .rec-group-count{font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .rec-group-arrow{margin-left:auto;color:var(--muted);font-size:11px;transition:transform .2s}
+  .rec-group.collapsed .rec-group-arrow{transform:rotate(-90deg)}
+  .rec-group.collapsed .rec-group-body{display:none}
+  .rec-group-body{border:1px solid var(--border);border-top:none}
+  .rec-table{width:100%;border-collapse:collapse}
+  .rec-table th{padding:9px 16px;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);background:var(--surface2)}
+  .rec-table td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:middle;background:white}
+  .rec-table tr:last-child td{border-bottom:none}
+  .rec-table tr:hover td{background:#fafbfc}
+  .rec-name{font-size:13px;font-weight:500}
+  .rec-date,.rec-time{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .rec-file{font-family:var(--mono);font-size:10px;color:var(--muted);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rec-actions{display:flex;gap:5px;justify-content:flex-end}
+  .empty-state{text-align:center;padding:48px 20px;background:white}
+  .empty-icon{font-size:34px;margin-bottom:10px;opacity:.45}
+  .empty-state p{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  /* SCHEDULE */
+  .schedule-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .day-col{background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+  .day-header{padding:9px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--surface2);border-bottom:1px solid var(--border)}
+  .day-body{padding:10px;min-height:80px;display:flex;flex-direction:column;gap:8px}
+  .sched-item{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:6px;padding:9px 10px;transition:box-shadow .15s;position:relative}
+  .sched-item.teal{background:var(--teal-bg);border-color:var(--teal-border)}
+  .sched-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .si-del{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:11px;opacity:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .sched-item:hover .si-del{opacity:1}
+  .si-del:hover{background:rgba(192,57,43,.1);color:var(--accent)}
+  .si-time{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:3px}
+  .sched-item.teal .si-time{color:var(--teal)}
+  .si-name{font-size:12px;font-weight:500;line-height:1.3;color:var(--text)}
+  .si-dur{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
+  .day-empty{padding:16px 6px;font-family:var(--mono);font-size:10px;color:#ccd0da;text-align:center}
+
+  /* LOGS TAB */
+  .log-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+  .log-box{background:#1a1d24;border-radius:var(--r);padding:16px;font-family:var(--mono);font-size:11px;color:#a8b4c8;height:400px;overflow-y:auto;line-height:1.7;border:1px solid #2e3340}
+  .log-box .log-line-err{color:#f87171}
+  .log-box .log-line-warn{color:#fbbf24}
+  .log-box .log-line-ok{color:#34d399}
+
+  /* DRAWER */
+  .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(15,20,35,.3);backdrop-filter:blur(3px);z-index:150}
+  .drawer-overlay.open{display:block;animation:fadeIn .2s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100vw);background:white;border-left:1px solid var(--border);z-index:151;overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .drawer-top{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);padding:28px 28px 24px;position:relative;flex-shrink:0}
+  .drawer-top.recording-active{background:linear-gradient(135deg,#991b1b 0%,var(--accent) 100%)}
+  .drawer-close{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:white;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .drawer-close:hover{background:rgba(255,255,255,.25)}
+  .drawer-badge{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.2);color:white;padding:3px 9px;border-radius:4px;display:inline-block;margin-bottom:10px}
+  .drawer-title{font-size:20px;font-weight:700;color:white;line-height:1.3;margin-bottom:6px}
+  .drawer-sub{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.7)}
+  .live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);padding:3px 9px;border-radius:20px;font-family:var(--mono);font-size:10px;color:white;margin-top:10px}
+  .live-dot{width:6px;height:6px;border-radius:50%;background:white;animation:pulse 1s infinite}
+  .drawer-body{padding:24px 28px;flex:1}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+  .info-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+  .info-card-label{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .info-card-value{font-size:14px;font-weight:500;color:var(--text)}
+  .info-card-value.mono{font-family:var(--mono);font-size:12px}
+  .info-card-value.green{color:var(--teal)} .info-card-value.red{color:var(--accent)}
+  .drawer-section{margin-bottom:22px}
+  .drawer-section-title{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .url-box{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+  .url-text{font-family:var(--mono);font-size:11px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .url-copy{font-family:var(--mono);font-size:10px;text-transform:uppercase;padding:4px 9px;border-radius:4px;border:1px solid var(--border2);background:white;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s}
+  .url-copy:hover{color:var(--teal);border-color:var(--teal-border);background:var(--teal-bg)}
+  .sched-list{display:flex;flex-direction:column;gap:7px}
+  .sched-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:9px 13px}
+  .sched-day{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text2);width:80px}
+  .sched-time-val{font-family:var(--mono);font-size:11px;color:var(--accent)}
+  .sched-dur-val{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
+  .rec-mini-list{display:flex;flex-direction:column;gap:7px}
+  .rec-mini-row{display:flex;align-items:center;gap:12px;padding:9px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:background .15s}
+  .rec-mini-row:hover{background:#edf0f4}
+  .rec-mini-name{font-size:13px;font-weight:500;flex:1}
+  .rec-mini-date{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .drawer-actions{display:flex;gap:9px;padding:20px 28px;border-top:1px solid var(--border);background:var(--surface2);flex-shrink:0;flex-wrap:wrap}
+
+  /* MODAL */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(15,20,35,.4);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
+  .overlay.open{display:flex;animation:fadeUp .2s ease}
+  .modal{background:white;border:1px solid var(--border);border-radius:12px;padding:28px;width:min(500px,92vw);position:relative;box-shadow:0 28px 70px rgba(0,0,0,.16)}
+  .modal-title{font-family:var(--mono);font-size:12px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:22px}
+  .modal-close{position:absolute;top:20px;right:20px;width:28px;height:28px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .modal-close:hover{color:var(--text);background:#ebedf0}
+  .form-group{margin-bottom:14px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  input,select,textarea{width:100%;background:white;border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:14px;transition:border-color .15s,box-shadow .15s;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(192,57,43,.08)}
+  input::placeholder{color:#b8bec9}
+  .url-picker{display:flex;flex-direction:column;gap:6px}
+  .url-picker-tabs{display:flex;gap:4px}
+  .url-tab{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:5px 11px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);cursor:pointer;transition:all .15s}
+  .url-tab.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)}
+  .url-picker-panel{display:none} .url-picker-panel.active{display:block}
+  .hoersaal-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+  .hs-btn{padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .15s;text-align:left}
+  .hs-btn:hover{border-color:var(--accent-border);background:var(--accent-bg)}
+  .hs-btn.selected{border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 2px rgba(192,57,43,.12)}
+  .hs-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+  .hs-url{font-family:var(--mono);font-size:9px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .url-preview{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;word-break:break-all;display:none}
+  .url-preview.visible{display:block}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+  .toggle-label{font-size:14px;color:var(--text2)}
+  .toggle{width:38px;height:21px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;border:none}
+  .toggle.on{background:var(--accent)}
+  .toggle::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .toggle.on::after{transform:translateX(17px)}
+  .modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+
+  #toast{position:fixed;bottom:20px;right:20px;background:white;border:1px solid var(--border);border-radius:7px;padding:11px 16px;font-family:var(--mono);font-size:11px;color:var(--teal);border-left:3px solid var(--teal);z-index:300;transform:translateY(70px);opacity:0;transition:all .28s ease;box-shadow:var(--shadow-md)}
+  #toast.show{transform:translateY(0);opacity:1}
+  #toast.error{color:var(--accent);border-left-color:var(--accent)}
+  #toast.warn{color:var(--orange);border-left-color:var(--orange)}
+
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin-right:4px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media(max-width:900px){
+    .app{padding:20px 14px} header{padding:0 14px}
+    .stats-bar{grid-template-columns:1fr 1fr 1fr}
+    .course-grid{grid-template-columns:1fr}
+    .schedule-grid{grid-template-columns:1fr 1fr}
+    .info-grid{grid-template-columns:1fr}
+    .drawer{width:100vw}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">TU</div>
+    <div class="logo-text"><strong>Lecture</strong> Recorder · Wien</div>
+  </div>
+  <div class="header-right">
+    <div class="rec-indicator" id="rec-indicator">
+      <div class="rec-dot"></div>
+      <span class="rec-label" id="rec-label">REC</span>
+    </div>
+    <div class="status-pill" id="api-status-pill">
+      <div class="status-dot"></div>
+      <span class="status-label" id="api-status-label">Verbinde…</span>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-label">Kurse</div><div class="stat-value accent" id="stat-courses">—</div></div>
+    <div class="stat-card"><div class="stat-label">Aufnahmen</div><div class="stat-value" id="stat-recordings">—</div></div>
+    <div class="stat-card"><div class="stat-label">Aktive Kurse</div><div class="stat-value teal" id="stat-active">—</div></div>
+    <div class="stat-card"><div class="stat-label">Läuft gerade</div><div class="stat-value orange" id="stat-recording-now">0</div></div>
+    <div class="stat-card"><div class="stat-label">Semester</div><div class="stat-value small">2026S</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('courses',this)">Kurse</button>
+    <button class="tab" onclick="switchTab('recordings',this)">Aufnahmen</button>
+    <button class="tab" onclick="switchTab('schedule',this)">Zeitplan</button>
+    <button class="tab" onclick="switchTab('logs',this)">Logs</button>
+  </div>
+
+  <!-- KURSE -->
+  <div class="tab-panel active" id="panel-courses">
+    <div class="section-header">
+      <span class="section-title" id="course-count-label">Kurse</span>
+      <button class="btn btn-primary" onclick="openAddCourse()">+ Kurs hinzufügen</button>
+    </div>
+    <div class="course-grid" id="course-grid"></div>
+  </div>
+
+  <!-- AUFNAHMEN -->
+  <div class="tab-panel" id="panel-recordings">
+    <div class="section-header">
+      <span class="section-title">Gespeicherte Aufnahmen</span>
+      <button class="btn btn-primary" onclick="openAddRecording()">+ Aufnahme</button>
+    </div>
+    <div class="rec-toolbar">
+      <button class="filter-chip active" id="chip-all" onclick="filterRec(null,this)">Alle</button>
+      <span id="rec-filter-chips"></span>
+      <span class="toolbar-sep"></span>
+      <select class="mini-select" id="rec-sort" onchange="renderRecordings()">
+        <option value="date-desc">Datum ↓ (neueste)</option>
+        <option value="date-asc">Datum ↑ (älteste)</option>
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+      </select>
+      <select class="mini-select" id="rec-view" onchange="renderRecordings()">
+        <option value="grouped">Nach Kurs gruppiert</option>
+        <option value="flat">Alle in einer Liste</option>
+      </select>
+    </div>
+    <div id="rec-container"></div>
+  </div>
+
+  <!-- ZEITPLAN -->
+  <div class="tab-panel" id="panel-schedule">
+    <div class="section-header">
+      <span class="section-title">Wochenplan</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-teal" id="scheduler-btn" onclick="toggleScheduler()">▶ Scheduler starten</button>
+        <button class="btn btn-ghost" onclick="openAddSchedule()">+ Termin</button>
+      </div>
+    </div>
+    <div class="schedule-grid" id="schedule-grid"></div>
+  </div>
+
+  <!-- LOGS -->
+  <div class="tab-panel" id="panel-logs">
+    <div class="section-header">
+      <span class="section-title">System-Logs</span>
+      <div style="display:flex;gap:8px">
+        <select class="mini-select" id="log-source" onchange="loadLogs()">
+          <option value="">API Log</option>
+        </select>
+        <button class="btn btn-ghost" onclick="loadLogs()">↻ Aktualisieren</button>
+      </div>
+    </div>
+    <div class="log-box" id="log-box"><span style="color:#4b5563">Lade Logs…</span></div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="course-drawer">
+  <div class="drawer-top" id="drawer-top">
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    <div class="drawer-badge" id="d-badge">VC</div>
+    <div class="drawer-title" id="d-title">Kursname</div>
+    <div class="drawer-sub" id="d-sub">—</div>
+    <div id="d-live-badge" style="display:none" class="live-badge"><div class="live-dot"></div>Aufnahme läuft</div>
+  </div>
+  <div class="drawer-body">
+    <div class="info-grid" id="d-infogrid"></div>
+    <div class="drawer-section" id="d-url-section">
+      <div class="drawer-section-title">Stream-URL</div>
+      <div class="url-box" id="d-url-box">
+        <span class="url-text" id="d-url-text">—</span>
+        <button class="url-copy" onclick="copyStreamUrl()">Kopieren</button>
+      </div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Zeitplan</div>
+      <div class="sched-list" id="d-sched-list"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Aufnahmen</div>
+      <div class="rec-mini-list" id="d-rec-list"></div>
+    </div>
+  </div>
+  <div class="drawer-actions">
+    <button class="btn btn-teal" id="d-rec-btn" onclick="toggleRecordingFromDrawer()">▶ Aufnahme starten</button>
+    <button class="btn btn-primary" onclick="editFromDrawer()">✏️ Bearbeiten</button>
+    <button class="btn btn-ghost" onclick="closeDrawer()">Schließen</button>
+    <button class="btn btn-danger" onclick="deleteFromDrawer()" style="margin-left:auto">🗑 Löschen</button>
+  </div>
+</div>
+
+<!-- MODAL: Kurs -->
+<div class="overlay" id="overlay-course">
+  <div class="modal">
+    <div class="modal-title" id="course-modal-title">Kurs hinzufügen</div>
+    <button class="modal-close" onclick="closeModal('overlay-course')">✕</button>
+    <div class="form-group">
+      <label>Vorlesungsname</label>
+      <input type="text" id="c-name" placeholder="z.B. Einführung in Visual Computing (186.822)">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Kürzel</label><input type="text" id="c-short" placeholder="vc"></div>
+      <div class="form-group"><label>Semester</label><input type="text" id="c-semester" placeholder="2026S"></div>
+    </div>
+    <div class="form-group">
+      <label>Stream-URL (m3u8)</label>
+      <div class="url-picker">
+        <div class="url-picker-tabs">
+          <button class="url-tab active" onclick="switchUrlTab('dropdown',this)">Hörsaal wählen</button>
+          <button class="url-tab" onclick="switchUrlTab('manual',this)">Manuell eingeben</button>
+        </div>
+        <div class="url-picker-panel active" id="url-panel-dropdown">
+          <div class="hoersaal-grid" id="hs-grid"></div>
+        </div>
+        <div class="url-picker-panel" id="url-panel-manual">
+          <input type="text" id="c-url-manual" placeholder="https://live.video.tuwien.ac.at/…/playlist.m3u8" oninput="syncManualUrl()">
+        </div>
+        <div class="url-preview" id="url-preview"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notizen</label>
+      <input type="text" id="c-notes" placeholder="Di+Do 10:00–12:00, GM 1 Audi Max">
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">Kurs aktiv</span>
+      <button class="toggle on" id="c-active" onclick="this.classList.toggle('on')"></button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('overlay-course')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveCourse()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Aufnahme -->
+<div class="overlay" id="overlay-rec">
+  <div class="modal">
+    <div class="modal-title" id="rec-modal-title">Aufnahme hinzufügen</div>
+    <button class="modal-close" onclick="closeModal('overlay-rec')">✕</button>
+    <div class="form-group"><label>Name / Thema</label><input type="text" id="r-name" placeholder="z.B. Vorlesung 3 – Rasterung"></div>
+    <div class="form-group"><label>Kurs</label><select id="r-course"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Datum</label><input type="date" id="r-date"></div>
+      <div class="form-group"><label>Uhrzeit</label><input type="time" id="r-time"></div>
+    </div>
+    <div class="form-group"><label>Dateiname</label><input type="text" id="r-file" placeholder="VC_2026-03-04_10-00-00.mp4"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('overlay-rec')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveRecording()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Zeitplan -->
+<div class="overlay" id="overlay-sched">
+  <div class="modal">
+    <div class="modal-title">Termin hinzufügen</div>
+    <button class="modal-close" onclick="closeModal('overlay-sched')">✕</button>
+    <div class="form-group"><label>Kurs</label><select id="s-course"></select></div>
+    <div class="form-group"><label>Wochentag</label>
+      <select id="s-day">
+        <option value="0">Montag</option><option value="1">Dienstag</option>
+        <option value="2">Mittwoch</option><option value="3">Donnerstag</option><option value="4">Freitag</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Startzeit</label><input type="time" id="s-start" value="10:00"></div>
+      <div class="form-group"><label>Dauer (Min.)</label><input type="number" id="s-dur" value="120" min="15" max="300"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('overlay-sched')">Abbrechen</button>
+      <button class="btn btn-teal" onclick="saveSchedule()">Hinzufügen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const API = '';  // Same-origin, served by Flask
+
+const WEEKDAY_NAMES = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'];
+const BASE_URL = 'https://live.video.tuwien.ac.at/lecturetube-live/';
+const HOERSAELE = [
+  {name:'GM 1 Audi Max', id:'gm1', path:'bau178a-gm-1-audi-max'},
+  {name:'GM 2 Radinger',  id:'gm2', path:'bau178a-gm-2-radinger'},
+  {name:'EHS',            id:'ehs', path:'bau178a-ehs'},
+  {name:'FH 1',           id:'fh1', path:'bau178a-fh-1'},
+  {name:'CH 1',           id:'ch1', path:'bau178a-ch-1'},
+  {name:'HS 7',           id:'hs7', path:'bau178a-hs-7'},
+  {name:'HS 8',           id:'hs8', path:'bau178a-hs-8'},
+  {name:'Inf HS',         id:'inf', path:'inf-hs'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let courses = {};
+let recordings = [];
+let schedule = {};
+let activeRecordings = {};
+let schedulerRunning = false;
+let editCourseKey = null;
+let editRecId = null;
+let activeRecFilter = null;
+let selectedHs = null;
+let urlTabMode = 'dropdown';
+let drawerKey = null;
+
+// ── API HELPERS ───────────────────────────────────────────────────────────────
+async function apiFetch(path, opts={}) {
+  try {
+    const res = await fetch(API + path, {
+      headers: {'Content-Type':'application/json'},
+      ...opts,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({error: res.statusText}));
+      throw new Error(err.error || res.statusText);
+    }
+    return await res.json();
+  } catch(e) {
+    if (e.message === 'Failed to fetch') {
+      setApiStatus(false);
+      throw new Error('API nicht erreichbar – läuft api.py?');
+    }
+    throw e;
+  }
+}
+
+function setApiStatus(ok) {
+  const pill = document.getElementById('api-status-pill');
+  const label = document.getElementById('api-status-label');
+  pill.style.background = ok ? 'var(--teal-bg)' : 'var(--accent-bg)';
+  pill.style.borderColor = ok ? 'var(--teal-border)' : 'var(--accent-border)';
+  pill.querySelector('.status-dot').style.background = ok ? 'var(--teal)' : 'var(--accent)';
+  pill.querySelector('.status-dot').style.boxShadow = ok ? '0 0 6px var(--teal)' : '0 0 6px var(--accent)';
+  label.style.color = ok ? 'var(--teal)' : 'var(--accent)';
+  label.textContent = ok ? 'API verbunden' : 'API getrennt';
+}
+
+// ── LOAD ALL DATA ─────────────────────────────────────────────────────────────
+async function loadAll() {
+  try {
+    [courses, recordings, schedule] = await Promise.all([
+      apiFetch('/api/courses'),
+      apiFetch('/api/recordings'),
+      apiFetch('/api/schedule'),
+    ]);
+    const status = await apiFetch('/api/recorder/status');
+    activeRecordings = status.active_recordings || {};
+    const schedStatus = await apiFetch('/api/scheduler/status');
+    schedulerRunning = schedStatus.running;
+    setApiStatus(true);
+    render();
+  } catch(e) {
+    toast(e.message, true);
+  }
+}
+
+function render() {
+  updateStats();
+  renderCourses();
+  renderRecordings();
+  renderSchedule();
+  updateSchedulerBtn();
+  updateRecIndicator();
+  buildHsGrid();
+  buildLogSourceSelect();
+}
+
+function updateStats() {
+  const keys = Object.keys(courses);
+  document.getElementById('stat-courses').textContent = keys.length;
+  document.getElementById('stat-recordings').textContent = recordings.length;
+  document.getElementById('stat-active').textContent = keys.filter(k=>courses[k].active!==false).length;
+  document.getElementById('stat-recording-now').textContent = Object.keys(activeRecordings).length;
+  document.getElementById('course-count-label').textContent = `${keys.length} Kurs${keys.length!==1?'e':''}`;
+}
+
+function updateRecIndicator() {
+  const ind = document.getElementById('rec-indicator');
+  const cnt = Object.keys(activeRecordings).length;
+  if (cnt > 0) {
+    ind.classList.add('active');
+    document.getElementById('rec-label').textContent = `REC ${cnt > 1 ? '('+cnt+')' : ''}`;
+  } else {
+    ind.classList.remove('active');
+  }
+}
+
+function updateSchedulerBtn() {
+  const btn = document.getElementById('scheduler-btn');
+  btn.textContent = schedulerRunning ? '⏹ Scheduler stoppen' : '▶ Scheduler starten';
+  btn.className = schedulerRunning ? 'btn btn-danger' : 'btn btn-teal';
+}
+
+// ── COURSES ───────────────────────────────────────────────────────────────────
+function renderCourses() {
+  const grid = document.getElementById('course-grid');
+  const keys = Object.keys(courses);
+  if (!keys.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1"><div class="empty-state" style="border:1px solid var(--border);border-radius:var(--r)"><div class="empty-icon">📚</div><p>Noch keine Kurse konfiguriert</p></div></div>`;
+    return;
+  }
+  grid.innerHTML = keys.map(k => {
+    const c = courses[k];
+    const active = c.active !== false;
+    const cnt = recordings.filter(r=>r.course===k).length;
+    const isRec = !!activeRecordings[k];
+    return `<div class="course-card ${active?'':'inactive'} ${isRec?'recording-active':''}" onclick="openDrawer('${k}')">
+      <div class="card-header">
+        <span class="course-badge ${active?'':'inactive'} ${isRec?'recording':''}">${isRec?'● ':''} ${c.short.toUpperCase()}</span>
+        <div class="card-btns" onclick="event.stopPropagation()">
+          <button class="icon-btn rec-btn ${isRec?'recording':''}" title="${isRec?'Aufnahme stoppen':'Aufnahme starten'}" onclick="toggleRecording('${k}',event)">${isRec?'⏹':'▶'}</button>
+          <button class="icon-btn" title="Bearbeiten" onclick="openEditCourse('${k}')">✏️</button>
+          <button class="icon-btn danger" title="Löschen" onclick="deleteCourse('${k}')">🗑</button>
+        </div>
+      </div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-meta">
+        <span>📅 ${c.semester}</span>
+        ${c.notes?`<span>📍 ${c.notes}</span>`:''}
+      </div>
+      <div class="recording-count">
+        <span class="rec-pill">${cnt} Aufnahme${cnt!==1?'n':''}</span>
+        <span style="color:${active?'var(--teal)':'var(--muted)'};font-family:var(--mono);font-size:10px">● ${active?'Aktiv':'Inaktiv'}</span>
+        <span class="card-hint">Details →</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RECORDING CONTROL ─────────────────────────────────────────────────────────
+async function toggleRecording(key, event) {
+  if (event) event.stopPropagation();
+  try {
+    if (activeRecordings[key]) {
+      await apiFetch(`/api/recorder/stop/${key}`, {method:'POST'});
+      delete activeRecordings[key];
+      toast(`⏹ Aufnahme gestoppt: ${key.toUpperCase()}`);
+    } else {
+      toast(`▶ Starte Aufnahme für ${key.toUpperCase()}… (prüfe Stream)`);
+      const res = await apiFetch(`/api/recorder/start/${key}`, {method:'POST'});
+      activeRecordings[key] = {pid: res.pid, output: res.output};
+      toast(`✅ Aufnahme läuft: ${key.toUpperCase()}`);
+      // Refresh recordings list
+      recordings = await apiFetch('/api/recordings');
+    }
+    render();
+  } catch(e) {
+    toast(e.message, true);
+  }
+}
+
+async function toggleRecordingFromDrawer() {
+  await toggleRecording(drawerKey);
+  // Refresh drawer
+  await loadAll();
+  if (document.getElementById('course-drawer').classList.contains('open')) openDrawer(drawerKey);
+}
+
+// ── DRAWER ────────────────────────────────────────────────────────────────────
+function openDrawer(key) {
+  drawerKey = key;
+  const c = courses[key];
+  const active = c.active !== false;
+  const recs = recordings.filter(r=>r.course===key);
+  const slots = schedule[key] || [];
+  const isRec = !!activeRecordings[key];
+
+  document.getElementById('d-badge').textContent = c.short.toUpperCase();
+  document.getElementById('d-title').textContent = c.name;
+  document.getElementById('d-sub').textContent = [c.semester, c.notes].filter(Boolean).join(' · ');
+  document.getElementById('drawer-top').className = `drawer-top ${isRec?'recording-active':''}`;
+  document.getElementById('d-live-badge').style.display = isRec ? 'inline-flex' : 'none';
+
+  const btn = document.getElementById('d-rec-btn');
+  btn.textContent = isRec ? '⏹ Aufnahme stoppen' : '▶ Aufnahme starten';
+  btn.className = isRec ? 'btn btn-danger' : 'btn btn-teal';
+
+  document.getElementById('d-infogrid').innerHTML = `
+    <div class="info-card"><div class="info-card-label">Status</div><div class="info-card-value ${active?'green':'red'}">${active?'● Aktiv':'● Inaktiv'}</div></div>
+    <div class="info-card"><div class="info-card-label">Semester</div><div class="info-card-value mono">${c.semester}</div></div>
+    <div class="info-card"><div class="info-card-label">Aufnahmen</div><div class="info-card-value">${recs.length} gespeichert</div></div>
+    <div class="info-card"><div class="info-card-label">Termine/Woche</div><div class="info-card-value">${slots.length}</div></div>`;
+
+  const url = c.stream_url || '';
+  const hs = HOERSAELE.find(h=>url.includes(h.path));
+  document.getElementById('d-url-text').textContent = hs ? `🎓 ${hs.name}  ·  ${url}` : (url || '— keine URL');
+  document.getElementById('d-url-text').dataset.url = url;
+  document.getElementById('d-url-text').style.color = hs ? 'var(--teal)' : '';
+  document.getElementById('d-url-box').style.background = hs ? 'var(--teal-bg)' : '';
+  document.getElementById('d-url-box').style.borderColor = hs ? 'var(--teal-border)' : '';
+
+  document.getElementById('d-sched-list').innerHTML = slots.length
+    ? slots.map(s=>`<div class="sched-row"><span class="sched-day">${WEEKDAY_NAMES[s.weekday]}</span><span class="sched-time-val">${s.start}</span><span class="sched-dur-val">${s.duration_min} Min.</span></div>`).join('')
+    : `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:8px 0">Keine Termine geplant.</div>`;
+
+  const sorted = [...recs].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('d-rec-list').innerHTML = sorted.length
+    ? sorted.map(r=>`<div class="rec-mini-row" onclick="openEditRecording(${r.id});closeDrawer()"><span class="rec-mini-name">${r.name||'—'}</span><span class="rec-mini-date">${fmtDate(r.date)}${r.time?' · '+r.time:''}</span></div>`).join('')
+    : `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:8px 0">Noch keine Aufnahmen.</div>`;
+
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('course-drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('course-drawer').classList.remove('open');
+}
+
+function editFromDrawer() { closeDrawer(); openEditCourse(drawerKey); }
+function deleteFromDrawer() { closeDrawer(); deleteCourse(drawerKey); }
+
+function copyStreamUrl() {
+  const url = document.getElementById('d-url-text').dataset.url;
+  if (!url) { toast('Keine URL gesetzt.', true); return; }
+  navigator.clipboard.writeText(url).then(()=>toast('Stream-URL kopiert!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    toast('Stream-URL kopiert!');
+  });
+}
+
+// ── RECORDINGS ────────────────────────────────────────────────────────────────
+function renderRecordings() {
+  const container = document.getElementById('rec-container');
+  const sortVal = document.getElementById('rec-sort').value;
+  const viewVal = document.getElementById('rec-view').value;
+  const keys = Object.keys(courses);
+
+  document.getElementById('rec-filter-chips').innerHTML = keys.map(k=>
+    `<button class="filter-chip ${activeRecFilter===k?'active':''}" onclick="filterRec('${k}',this)">${k.toUpperCase()}</button>`
+  ).join('');
+
+  let recs = [...recordings];
+  if (activeRecFilter) recs = recs.filter(r=>r.course===activeRecFilter);
+  recs.sort((a,b)=>{
+    const da=(a.date||'')+(a.time||''),db=(b.date||'')+(b.time||'');
+    if(sortVal==='date-desc') return db.localeCompare(da);
+    if(sortVal==='date-asc')  return da.localeCompare(db);
+    if(sortVal==='name-asc')  return (a.name||'').localeCompare(b.name||'');
+    if(sortVal==='name-desc') return (b.name||'').localeCompare(a.name||'');
+    return 0;
+  });
+
+  if (!recs.length) {
+    container.innerHTML=`<div class="empty-state" style="border:1px solid var(--border);border-radius:var(--r)"><div class="empty-icon">📼</div><p>Keine Aufnahmen gefunden</p></div>`;
+    return;
+  }
+  if (viewVal==='grouped') {
+    const groups={};
+    recs.forEach(r=>{const k=r.course||'_other';if(!groups[k])groups[k]=[];groups[k].push(r);});
+    const order=[...keys.filter(k=>groups[k]),...Object.keys(groups).filter(k=>!keys.includes(k))];
+    container.innerHTML=order.map(k=>{
+      const c=courses[k];
+      const label=c?`${c.short.toUpperCase()} – ${c.name.split('(')[0].trim()}`:k.toUpperCase();
+      return `<div class="rec-group" id="rg-${k}">
+        <div class="rec-group-header" onclick="this.closest('.rec-group').classList.toggle('collapsed')">
+          <span class="rec-group-title">${label}</span>
+          <span class="rec-group-count">${groups[k].length} Aufnahme${groups[k].length!==1?'n':''}</span>
+          <span class="rec-group-arrow">▾</span>
+        </div>
+        <div class="rec-group-body">${makeTable(groups[k],false)}</div>
+      </div>`;
+    }).join('');
+  } else {
+    container.innerHTML=`<div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)">${makeTable(recs,true)}</div>`;
+  }
+}
+
+function makeTable(recs, showCourse) {
+  const rows=recs.map(r=>{
+    const c=courses[r.course];
+    const folder=c?`recordings/${c.semester}/${c.short.toUpperCase()}/`:'';
+    const fullPath=folder+(r.file||'');
+    const courseCell=showCourse?`<td><span style="font-family:var(--mono);font-size:10px;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);padding:2px 6px;border-radius:3px">${(r.course||'—').toUpperCase()}</span></td>`:'';
+    return `<tr>
+      <td><div class="rec-name">${r.name||'—'}</div></td>
+      ${courseCell}
+      <td><span class="rec-date">${fmtDate(r.date)}</span></td>
+      <td><span class="rec-time">${r.time||'—'}</span></td>
+      <td><span class="rec-file" title="${fullPath}">${fullPath||'—'}</span></td>
+      <td><div class="rec-actions">
+        <button class="icon-btn copy" title="Ordnerpfad kopieren" onclick="copyPath('${escQ(folder)}')">📋</button>
+        <button class="icon-btn" title="Bearbeiten" onclick="openEditRecording(${r.id})">✏️</button>
+        <button class="icon-btn danger" title="Löschen" onclick="deleteRecording(${r.id})">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  return `<table class="rec-table"><thead><tr>
+    <th>Name</th>${showCourse?'<th>Kurs</th>':''}
+    <th>Datum</th><th>Uhrzeit</th><th>Dateipfad</th><th></th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function filterRec(key,el) {
+  activeRecFilter=key;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderRecordings();
+}
+
+// ── SCHEDULE ──────────────────────────────────────────────────────────────────
+function renderSchedule() {
+  const grid=document.getElementById('schedule-grid');
+  grid.innerHTML=WEEKDAY_NAMES.map((day,i)=>{
+    const items=[];
+    for(const[ck,slots] of Object.entries(schedule)){
+      (slots||[]).forEach(s=>{if(s.weekday===i){const c=courses[ck];items.push({ck,s,name:c?c.name:ck});}});
+    }
+    items.sort((a,b)=>a.s.start.localeCompare(b.s.start));
+    return `<div class="day-col">
+      <div class="day-header">${day}</div>
+      <div class="day-body">${items.length?items.map((it,j)=>`
+        <div class="sched-item ${j%2===1?'teal':''}">
+          <button class="si-del" onclick="deleteScheduleSlot('${it.ck}',${it.s.weekday},'${it.s.start}')" title="Entfernen">✕</button>
+          <div class="si-time">${it.s.start}</div>
+          <div class="si-name">${it.name.split('(')[0].trim()}</div>
+          <div class="si-dur">${it.s.duration_min} Min.</div>
+        </div>`).join(''):`<div class="day-empty">—</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleScheduler() {
+  try {
+    if (schedulerRunning) {
+      await apiFetch('/api/scheduler/stop', {method:'POST'});
+      schedulerRunning = false;
+      toast('Scheduler gestoppt.');
+    } else {
+      await apiFetch('/api/scheduler/start', {method:'POST'});
+      schedulerRunning = true;
+      toast('✅ Scheduler gestartet – Aufnahmen werden automatisch gestartet.');
+    }
+    updateSchedulerBtn();
+  } catch(e) { toast(e.message, true); }
+}
+
+// ── LOGS ──────────────────────────────────────────────────────────────────────
+function buildLogSourceSelect() {
+  const sel = document.getElementById('log-source');
+  const existing = [''];
+  const opts = Object.keys(courses).map(k=>`<option value="${k}">${k.toUpperCase()} (ffmpeg)</option>`).join('');
+  sel.innerHTML = `<option value="">API Log</option>${opts}`;
+}
+
+async function loadLogs() {
+  const source = document.getElementById('log-source').value;
+  const box = document.getElementById('log-box');
+  box.innerHTML = '<span style="color:#4b5563">Lade…</span>';
+  try {
+    const data = source
+      ? await apiFetch(`/api/logs/${source}`)
+      : await apiFetch('/api/logs');
+    if (!data.lines.length) { box.innerHTML = '<span style="color:#4b5563">Keine Einträge.</span>'; return; }
+    box.innerHTML = data.lines.map(l => {
+      let cls = '';
+      if (l.includes('[ERROR]') || l.includes('Error') || l.includes('error')) cls = 'log-line-err';
+      else if (l.includes('[WARNING]') || l.includes('warn')) cls = 'log-line-warn';
+      else if (l.includes('▶') || l.includes('✅') || l.includes('gestartet')) cls = 'log-line-ok';
+      return `<div class="${cls}">${escHtml(l)}</div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  } catch(e) { box.innerHTML = `<span style="color:#f87171">${escHtml(e.message)}</span>`; }
+}
+
+// ── URL PICKER ────────────────────────────────────────────────────────────────
+function buildHsGrid() {
+  document.getElementById('hs-grid').innerHTML=HOERSAELE.map(hs=>`
+    <button class="hs-btn ${selectedHs===hs.id?'selected':''}" onclick="selectHs('${hs.id}')">
+      <div class="hs-name">${hs.name}</div>
+      <div class="hs-url">${hs.path}/playlist.m3u8</div>
+    </button>`).join('');
+}
+
+function selectHs(id) {
+  selectedHs=id; buildHsGrid();
+  const hs=HOERSAELE.find(h=>h.id===id);
+  if(hs) showUrlPreview(BASE_URL+hs.path+'/playlist.m3u8');
+}
+
+function showUrlPreview(url) {
+  const p=document.getElementById('url-preview');
+  if(url){p.textContent=url;p.classList.add('visible');}else p.classList.remove('visible');
+}
+
+function switchUrlTab(mode,el) {
+  urlTabMode=mode;
+  document.querySelectorAll('.url-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');
+  document.querySelectorAll('.url-picker-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('url-panel-'+mode).classList.add('active');
+  if(mode==='dropdown') showUrlPreview(selectedHs?BASE_URL+HOERSAELE.find(h=>h.id===selectedHs).path+'/playlist.m3u8':'');
+  else showUrlPreview(document.getElementById('c-url-manual').value.trim());
+}
+
+function syncManualUrl(){showUrlPreview(document.getElementById('c-url-manual').value.trim());}
+
+function getSelectedUrl() {
+  if(urlTabMode==='manual') return document.getElementById('c-url-manual').value.trim();
+  if(selectedHs) return BASE_URL+HOERSAELE.find(h=>h.id===selectedHs).path+'/playlist.m3u8';
+  return '';
+}
+
+function setUrlInPicker(url) {
+  if(!url){selectedHs=null;urlTabMode='dropdown';buildHsGrid();showUrlPreview('');return;}
+  const hs=HOERSAELE.find(h=>url.includes(h.path));
+  if(hs){
+    selectedHs=hs.id; urlTabMode='dropdown';
+    document.querySelectorAll('.url-tab')[0].classList.add('active');
+    document.querySelectorAll('.url-tab')[1].classList.remove('active');
+    document.getElementById('url-panel-dropdown').classList.add('active');
+    document.getElementById('url-panel-manual').classList.remove('active');
+    buildHsGrid(); showUrlPreview(url);
+  } else {
+    selectedHs=null; urlTabMode='manual';
+    document.querySelectorAll('.url-tab')[0].classList.remove('active');
+    document.querySelectorAll('.url-tab')[1].classList.add('active');
+    document.getElementById('url-panel-dropdown').classList.remove('active');
+    document.getElementById('url-panel-manual').classList.add('active');
+    document.getElementById('c-url-manual').value=url; buildHsGrid(); showUrlPreview(url);
+  }
+}
+
+// ── COURSE CRUD ───────────────────────────────────────────────────────────────
+function openAddCourse() {
+  editCourseKey=null;
+  document.getElementById('course-modal-title').textContent='Kurs hinzufügen';
+  ['c-name','c-short','c-notes','c-url-manual'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c-semester').value='2026S';
+  document.getElementById('c-active').classList.add('on');
+  setUrlInPicker(''); openModal('overlay-course');
+}
+function openEditCourse(key) {
+  editCourseKey=key; const c=courses[key];
+  document.getElementById('course-modal-title').textContent='Kurs bearbeiten';
+  document.getElementById('c-name').value=c.name;
+  document.getElementById('c-short').value=c.short;
+  document.getElementById('c-semester').value=c.semester;
+  document.getElementById('c-notes').value=c.notes||'';
+  document.getElementById('c-active').classList.toggle('on',c.active!==false);
+  setUrlInPicker(c.stream_url||''); openModal('overlay-course');
+}
+async function saveCourse() {
+  const name=document.getElementById('c-name').value.trim();
+  const short=document.getElementById('c-short').value.trim().toLowerCase();
+  const semester=document.getElementById('c-semester').value.trim()||'2026S';
+  const stream_url=getSelectedUrl();
+  const notes=document.getElementById('c-notes').value.trim();
+  const active=document.getElementById('c-active').classList.contains('on');
+  if(!name||!short){toast('Name und Kürzel sind Pflichtfelder.',true);return;}
+  try {
+    if(editCourseKey) {
+      courses[editCourseKey]=await apiFetch(`/api/courses/${editCourseKey}`,{method:'PUT',body:{name,short,semester,stream_url,active,notes}});
+      if(editCourseKey!==short){delete courses[editCourseKey];courses[short]=courses[editCourseKey];}
+    } else {
+      const c=await apiFetch('/api/courses',{method:'POST',body:{name,short,semester,stream_url,active,notes}});
+      courses[short]=c;
+    }
+    courses=await apiFetch('/api/courses');
+    closeModal('overlay-course'); render(); toast(`Kurs „${name}" gespeichert.`);
+  } catch(e){toast(e.message,true);}
+}
+async function deleteCourse(key) {
+  if(!confirm(`Kurs „${courses[key].name}" löschen?`)) return;
+  try {
+    await apiFetch(`/api/courses/${key}`,{method:'DELETE'});
+    delete courses[key]; schedule[key] && delete schedule[key];
+    render(); toast('Kurs gelöscht.');
+  } catch(e){toast(e.message,true);}
+}
+
+// ── RECORDING CRUD ────────────────────────────────────────────────────────────
+function openAddRecording() {
+  editRecId=null;
+  document.getElementById('rec-modal-title').textContent='Aufnahme hinzufügen';
+  document.getElementById('r-name').value='';
+  document.getElementById('r-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('r-time').value='';
+  document.getElementById('r-file').value='';
+  populateSel('r-course'); openModal('overlay-rec');
+}
+function openEditRecording(id) {
+  const rec=recordings.find(r=>r.id===id); if(!rec) return;
+  editRecId=id;
+  document.getElementById('rec-modal-title').textContent='Aufnahme bearbeiten';
+  document.getElementById('r-name').value=rec.name;
+  document.getElementById('r-date').value=rec.date||'';
+  document.getElementById('r-time').value=rec.time||'';
+  document.getElementById('r-file').value=rec.file||'';
+  populateSel('r-course'); document.getElementById('r-course').value=rec.course;
+  openModal('overlay-rec');
+}
+async function saveRecording() {
+  const name=document.getElementById('r-name').value.trim();
+  const course=document.getElementById('r-course').value;
+  const date=document.getElementById('r-date').value;
+  const time=document.getElementById('r-time').value;
+  const file=document.getElementById('r-file').value.trim();
+  if(!name||!course){toast('Name und Kurs sind Pflichtfelder.',true);return;}
+  try {
+    if(editRecId!==null){
+      await apiFetch(`/api/recordings/${editRecId}`,{method:'PUT',body:{name,course,date,time,file}});
+    } else {
+      await apiFetch('/api/recordings',{method:'POST',body:{name,course,date,time,file}});
+    }
+    recordings=await apiFetch('/api/recordings');
+    closeModal('overlay-rec'); renderRecordings(); updateStats(); toast('Aufnahme gespeichert.');
+  } catch(e){toast(e.message,true);}
+}
+async function deleteRecording(id) {
+  if(!confirm('Aufnahme entfernen?')) return;
+  try {
+    await apiFetch(`/api/recordings/${id}`,{method:'DELETE'});
+    recordings=recordings.filter(r=>r.id!==id);
+    renderRecordings(); updateStats(); toast('Aufnahme entfernt.');
+  } catch(e){toast(e.message,true);}
+}
+
+// ── SCHEDULE CRUD ─────────────────────────────────────────────────────────────
+function openAddSchedule(){populateSel('s-course');document.getElementById('s-day').value='1';document.getElementById('s-start').value='10:00';document.getElementById('s-dur').value='120';openModal('overlay-sched');}
+async function saveSchedule(){
+  const course=document.getElementById('s-course').value;
+  const weekday=parseInt(document.getElementById('s-day').value);
+  const start=document.getElementById('s-start').value;
+  const duration_min=parseInt(document.getElementById('s-dur').value)||120;
+  if(!course){toast('Bitte einen Kurs wählen.',true);return;}
+  try{
+    await apiFetch(`/api/schedule/${course}`,{method:'POST',body:{weekday,start,duration_min}});
+    schedule=await apiFetch('/api/schedule');
+    closeModal('overlay-sched'); renderSchedule(); toast('Termin hinzugefügt.');
+  }catch(e){toast(e.message,true);}
+}
+async function deleteScheduleSlot(ck,weekday,start){
+  try{
+    await apiFetch(`/api/schedule/${ck}/${weekday}/${start}`,{method:'DELETE'});
+    schedule=await apiFetch('/api/schedule');
+    renderSchedule(); toast('Termin entfernt.');
+  }catch(e){toast(e.message,true);}
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function fmtDate(d){if(!d)return'—';try{return new Date(d+'T12:00:00').toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return d;}}
+function escQ(s){return(s||'').replace(/'/g,"\\'")}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function copyPath(path){
+  if(!path){toast('Kein Pfad.',true);return;}
+  navigator.clipboard.writeText(path).then(()=>toast('📋 Pfad kopiert — Strg+V im Explorer')).catch(()=>{const ta=document.createElement('textarea');ta.value=path;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 Pfad kopiert!');});
+}
+function switchTab(name,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('panel-'+name).classList.add('active');if(name==='logs')loadLogs();}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function toast(msg,error=false){const t=document.getElementById('toast');t.textContent=msg;t.className=error?'error':'';t.offsetHeight;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+function populateSel(id){document.getElementById(id).innerHTML=Object.keys(courses).map(k=>`<option value="${k}">${courses[k].short.toUpperCase()} – ${courses[k].name.split('(')[0].trim()}</option>`).join('');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ── INIT + POLLING ────────────────────────────────────────────────────────────
+loadAll();
+buildHsGrid();
+// Poll recorder status every 10s
+setInterval(async ()=>{
+  try{
+    const s=await apiFetch('/api/recorder/status');
+    activeRecordings=s.active_recordings||{};
+    document.getElementById('stat-recording-now').textContent=Object.keys(activeRecordings).length;
+    updateRecIndicator();
+    renderCourses();
+    setApiStatus(true);
+  }catch(e){setApiStatus(false);}
+},10000);
+</script>
+</body>
+</html>

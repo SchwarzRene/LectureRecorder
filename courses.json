@@ -1,0 +1,18 @@
+{
+  "vc": {
+    "name": "Einführung in Visual Computing (186.822)",
+    "short": "vc",
+    "semester": "2026S",
+    "stream_url": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-gm-1-audi-max/playlist.m3u8",
+    "active": true,
+    "notes": "Di+Do 10:00–12:00, GM 1 Audi Max"
+  },
+  "_hoersaele": {
+    "_info": "Bekannte TU Wien Hörsaal-URLs",
+    "gm1": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-gm-1-audi-max/playlist.m3u8",
+    "gm2": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-gm-2-radinger/playlist.m3u8",
+    "ehs": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-ehs/playlist.m3u8",
+    "fh1": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-fh-1/playlist.m3u8",
+    "ch1": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-ch-1/playlist.m3u8"
+  }
+}

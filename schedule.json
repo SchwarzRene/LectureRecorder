@@ -1,0 +1,6 @@
+{
+  "vc": [
+    {"weekday": 1, "start": "10:00", "duration_min": 120},
+    {"weekday": 3, "start": "10:00", "duration_min": 120}
+  ]
+}

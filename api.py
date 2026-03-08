@@ -7,7 +7,7 @@ Die Web-UI kommuniziert ausschließlich über diese Endpunkte.
 
 Starten:
     python api.py
-    → http://localhost:5000
+    http://localhost:5000
 """
 
 import json
@@ -38,12 +38,16 @@ for d in [LOG_DIR, OUTPUT_BASE, STATIC_DIR]:
     d.mkdir(exist_ok=True)
 
 # ── Logging ───────────────────────────────────────────────────────────────────
+import io
+_stream_handler = logging.StreamHandler(io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace"))
+_stream_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(LOG_DIR / "api.log"),
+        _stream_handler,
+        logging.FileHandler(LOG_DIR / "api.log", encoding="utf-8"),
     ],
 )
 log = logging.getLogger("api")
@@ -229,7 +233,7 @@ def update_course(key):
 
     courses[new_short] = updated
     save_courses(courses)
-    log.info(f"Kurs aktualisiert: {key} → {new_short}")
+    log.info(f"Kurs aktualisiert: {key} -> {new_short}")
     return jsonify(updated)
 
 
@@ -380,7 +384,7 @@ def start_recording(course_key):
     }
     save_pids(pids)
 
-    log.info(f"▶ Aufnahme gestartet: {course_key} → {out_path}")
+    log.info(f"[START] Aufnahme gestartet: {course_key} -> {out_path}")
     return jsonify({"ok": True, "pid": proc.pid, "output": out_path, "recording_id": rec_id})
 
 
@@ -391,7 +395,7 @@ def stop_recording(course_key):
         return jsonify({"error": "Keine laufende Aufnahme gefunden"}), 404
     try:
         os.kill(pids[course_key]["pid"], signal.SIGTERM)
-        log.info(f"🛑 Aufnahme gestoppt: {course_key}")
+        log.info(f"[STOP] Aufnahme gestoppt: {course_key}")
     except ProcessLookupError:
         pass
     del pids[course_key]
@@ -413,7 +417,7 @@ def stop_all_recordings():
             stopped.append(short)
     save_pids({})
     _active_procs.clear()
-    log.info(f"🛑 Alle Aufnahmen gestoppt: {stopped}")
+    log.info(f"[STOP] Alle Aufnahmen gestoppt: {stopped}")
     return jsonify({"ok": True, "stopped": stopped})
 
 
@@ -508,7 +512,7 @@ def _scheduled_record(course_key: str, course: dict, duration_min: int):
     pids = load_pids()
     pids[course_key] = {"pid": proc.pid, "output": out_path, "started": datetime.now().isoformat()}
     save_pids(pids)
-    log.info(f"Scheduler: ▶ {course_key} läuft ({duration_min} Min.)")
+    log.info(f"[SCHED] {course_key} laeuft ({duration_min} Min.)")
     time.sleep(duration_min * 60)
     try:
         proc.terminate()
@@ -518,7 +522,7 @@ def _scheduled_record(course_key: str, course: dict, duration_min: int):
     pids.pop(course_key, None)
     save_pids(pids)
     _active_procs.pop(course_key, None)
-    log.info(f"Scheduler: 🛑 {course_key} beendet")
+    log.info(f"[SCHED] {course_key} beendet")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -563,8 +567,8 @@ def static_files(filename):
 if __name__ == "__main__":
     log.info("=" * 60)
     log.info("TU Wien Lecture Recorder API")
-    log.info(f"  Aufnahmen → {OUTPUT_BASE}")
-    log.info(f"  Logs      → {LOG_DIR}")
-    log.info(f"  Frontend  → http://localhost:5000")
+    log.info(f"  Aufnahmen : {OUTPUT_BASE}")
+    log.info(f"  Logs      : {LOG_DIR}")
+    log.info(f"  Frontend  : http://localhost:5000")
     log.info("=" * 60)
     app.run(host="0.0.0.0", port=5000, debug=False)

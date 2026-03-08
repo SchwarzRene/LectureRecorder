@@ -1,11 +1,11 @@
 {
-  "vc": {
-    "name": "Einführung in Visual Computing (186.822)",
-    "short": "vc",
+  "dbs": {
+    "name": "Datenbanksysteme",
+    "short": "dbs",
     "semester": "2026S",
     "stream_url": "https://live.video.tuwien.ac.at/lecturetube-live/bau178a-gm-1-audi-max/playlist.m3u8",
     "active": true,
-    "notes": "Di+Do 10:00–12:00, GM 1 Audi Max"
+    "notes": ""
   },
   "_hoersaele": {
     "_info": "Bekannte TU Wien Hörsaal-URLs",

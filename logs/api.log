@@ -1,0 +1,118 @@
+2026-03-05 07:54:26,430 [INFO] ============================================================
+2026-03-05 07:54:26,430 [INFO] TU Wien Lecture Recorder API
+2026-03-05 07:54:26,485 [INFO] ============================================================
+2026-03-05 07:54:26,552 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.10.9.129:5000
+2026-03-05 07:54:26,552 [INFO] [33mPress CTRL+C to quit[0m
+2026-03-05 08:00:45,999 [INFO] ============================================================
+2026-03-05 08:00:46,017 [INFO] TU Wien Lecture Recorder API
+2026-03-05 08:00:46,017 [INFO]   Aufnahmen : C:\Users\rene3\OneDrive\Dokumente\GitHub\LectureRecorder\recordings
+2026-03-05 08:00:46,017 [INFO]   Logs      : C:\Users\rene3\OneDrive\Dokumente\GitHub\LectureRecorder\logs
+2026-03-05 08:00:46,017 [INFO]   Frontend  : http://localhost:5000
+2026-03-05 08:00:46,019 [INFO] ============================================================
+2026-03-05 08:00:46,041 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.10.9.129:5000
+2026-03-05 08:00:46,042 [INFO] [33mPress CTRL+C to quit[0m
+2026-03-05 08:00:51,539 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "GET / HTTP/1.1" 200 -
+2026-03-05 08:00:51,631 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "GET /api/recordings HTTP/1.1" 200 -
+2026-03-05 08:00:51,631 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "GET /api/schedule HTTP/1.1" 200 -
+2026-03-05 08:00:51,631 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "GET /api/courses HTTP/1.1" 200 -
+2026-03-05 08:00:51,663 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:00:51,671 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "GET /api/scheduler/status HTTP/1.1" 200 -
+2026-03-05 08:00:51,732 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:51] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-03-05 08:00:55,522 [INFO] Kurs gelöscht: vc
+2026-03-05 08:00:55,523 [INFO] 127.0.0.1 - - [05/Mar/2026 08:00:55] "DELETE /api/courses/vc HTTP/1.1" 200 -
+2026-03-05 08:01:01,648 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:01] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:01:11,637 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:11] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:01:21,637 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:21] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:01:27,637 [INFO] Kurs hinzugefügt: dbs
+2026-03-05 08:01:27,637 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:27] "[35m[1mPOST /api/courses HTTP/1.1[0m" 201 -
+2026-03-05 08:01:27,643 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:27] "GET /api/courses HTTP/1.1" 200 -
+2026-03-05 08:01:31,632 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:31] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:01:41,635 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:41] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:01:44,491 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:44] "[35m[1mPOST /api/schedule/dbs HTTP/1.1[0m" 201 -
+2026-03-05 08:01:44,504 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:44] "GET /api/schedule HTTP/1.1" 200 -
+2026-03-05 08:01:47,856 [INFO] Scheduler-Thread läuft…
+2026-03-05 08:01:47,856 [INFO] Scheduler gestartet
+2026-03-05 08:01:47,856 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:47] "POST /api/scheduler/start HTTP/1.1" 200 -
+2026-03-05 08:01:51,633 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:51] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:01:52,928 [INFO] 127.0.0.1 - - [05/Mar/2026 08:01:52] "GET /api/logs HTTP/1.1" 200 -
+2026-03-05 08:02:01,634 [INFO] 127.0.0.1 - - [05/Mar/2026 08:02:01] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:02:11,632 [INFO] 127.0.0.1 - - [05/Mar/2026 08:02:11] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:02:22,166 [INFO] 127.0.0.1 - - [05/Mar/2026 08:02:22] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:02:32,162 [INFO] 127.0.0.1 - - [05/Mar/2026 08:02:32] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:02:42,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:02:42] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:02:52,169 [INFO] 127.0.0.1 - - [05/Mar/2026 08:02:52] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:03:02,172 [INFO] 127.0.0.1 - - [05/Mar/2026 08:03:02] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:03:12,158 [INFO] 127.0.0.1 - - [05/Mar/2026 08:03:12] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:03:58,167 [INFO] 127.0.0.1 - - [05/Mar/2026 08:03:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:04:58,166 [INFO] 127.0.0.1 - - [05/Mar/2026 08:04:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:05:58,174 [INFO] 127.0.0.1 - - [05/Mar/2026 08:05:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:06:58,170 [INFO] 127.0.0.1 - - [05/Mar/2026 08:06:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:07:15,352 [INFO] 127.0.0.1 - - [05/Mar/2026 08:07:15] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:07:22,168 [INFO] 127.0.0.1 - - [05/Mar/2026 08:07:22] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:07:32,169 [INFO] 127.0.0.1 - - [05/Mar/2026 08:07:32] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:07:42,166 [INFO] 127.0.0.1 - - [05/Mar/2026 08:07:42] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:07:52,162 [INFO] 127.0.0.1 - - [05/Mar/2026 08:07:52] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:08:02,160 [INFO] 127.0.0.1 - - [05/Mar/2026 08:08:02] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:08:12,167 [INFO] 127.0.0.1 - - [05/Mar/2026 08:08:12] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:08:58,161 [INFO] 127.0.0.1 - - [05/Mar/2026 08:08:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:09:58,164 [INFO] 127.0.0.1 - - [05/Mar/2026 08:09:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:10:58,157 [INFO] 127.0.0.1 - - [05/Mar/2026 08:10:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:11:58,168 [INFO] 127.0.0.1 - - [05/Mar/2026 08:11:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:12:03,006 [INFO] 127.0.0.1 - - [05/Mar/2026 08:12:03] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:12:12,168 [INFO] 127.0.0.1 - - [05/Mar/2026 08:12:12] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:12:22,161 [INFO] 127.0.0.1 - - [05/Mar/2026 08:12:22] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:12:31,636 [INFO] 127.0.0.1 - - [05/Mar/2026 08:12:31] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:12:42,167 [INFO] 127.0.0.1 - - [05/Mar/2026 08:12:42] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:12:52,168 [INFO] 127.0.0.1 - - [05/Mar/2026 08:12:52] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:13:02,173 [INFO] 127.0.0.1 - - [05/Mar/2026 08:13:02] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:13:12,172 [INFO] 127.0.0.1 - - [05/Mar/2026 08:13:12] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:13:22,175 [INFO] 127.0.0.1 - - [05/Mar/2026 08:13:22] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:13:32,175 [INFO] 127.0.0.1 - - [05/Mar/2026 08:13:32] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:13:58,170 [INFO] 127.0.0.1 - - [05/Mar/2026 08:13:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:14:32,626 [INFO] 127.0.0.1 - - [05/Mar/2026 08:14:32] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:14:42,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:14:42] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:14:52,157 [INFO] 127.0.0.1 - - [05/Mar/2026 08:14:52] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:15:02,165 [INFO] 127.0.0.1 - - [05/Mar/2026 08:15:02] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:15:12,169 [INFO] 127.0.0.1 - - [05/Mar/2026 08:15:12] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:15:22,162 [INFO] 127.0.0.1 - - [05/Mar/2026 08:15:22] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:15:32,167 [INFO] 127.0.0.1 - - [05/Mar/2026 08:15:32] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:15:42,162 [INFO] 127.0.0.1 - - [05/Mar/2026 08:15:42] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:15:52,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:15:52] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:16:02,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:16:02] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:16:12,164 [INFO] 127.0.0.1 - - [05/Mar/2026 08:16:12] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:16:22,160 [INFO] 127.0.0.1 - - [05/Mar/2026 08:16:22] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:16:32,172 [INFO] 127.0.0.1 - - [05/Mar/2026 08:16:32] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:16:58,164 [INFO] 127.0.0.1 - - [05/Mar/2026 08:16:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:17:58,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:17:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:18:58,164 [INFO] 127.0.0.1 - - [05/Mar/2026 08:18:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:19:58,160 [INFO] 127.0.0.1 - - [05/Mar/2026 08:19:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:20:58,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:20:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:21:58,168 [INFO] 127.0.0.1 - - [05/Mar/2026 08:21:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:22:58,167 [INFO] 127.0.0.1 - - [05/Mar/2026 08:22:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:23:58,172 [INFO] 127.0.0.1 - - [05/Mar/2026 08:23:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:24:58,160 [INFO] 127.0.0.1 - - [05/Mar/2026 08:24:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:25:58,171 [INFO] 127.0.0.1 - - [05/Mar/2026 08:25:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:26:58,162 [INFO] 127.0.0.1 - - [05/Mar/2026 08:26:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:27:58,169 [INFO] 127.0.0.1 - - [05/Mar/2026 08:27:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:28:58,177 [INFO] 127.0.0.1 - - [05/Mar/2026 08:28:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:29:58,161 [INFO] 127.0.0.1 - - [05/Mar/2026 08:29:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:30:58,171 [INFO] 127.0.0.1 - - [05/Mar/2026 08:30:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:31:58,165 [INFO] 127.0.0.1 - - [05/Mar/2026 08:31:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:32:58,163 [INFO] 127.0.0.1 - - [05/Mar/2026 08:32:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:33:58,160 [INFO] 127.0.0.1 - - [05/Mar/2026 08:33:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:34:58,160 [INFO] 127.0.0.1 - - [05/Mar/2026 08:34:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:35:58,161 [INFO] 127.0.0.1 - - [05/Mar/2026 08:35:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:36:58,165 [INFO] 127.0.0.1 - - [05/Mar/2026 08:36:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:37:58,167 [INFO] 127.0.0.1 - - [05/Mar/2026 08:37:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:38:58,165 [INFO] 127.0.0.1 - - [05/Mar/2026 08:38:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:39:58,161 [INFO] 127.0.0.1 - - [05/Mar/2026 08:39:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:40:58,159 [INFO] 127.0.0.1 - - [05/Mar/2026 08:40:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:41:58,168 [INFO] 127.0.0.1 - - [05/Mar/2026 08:41:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:42:58,164 [INFO] 127.0.0.1 - - [05/Mar/2026 08:42:58] "GET /api/recorder/status HTTP/1.1" 200 -
+2026-03-05 08:43:58,169 [INFO] 127.0.0.1 - - [05/Mar/2026 08:43:58] "GET /api/recorder/status HTTP/1.1" 200 -
